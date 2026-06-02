@@ -202,7 +202,7 @@ mod tests {
     #[test]
     fn lexes_numbers_including_decimals() {
         assert_eq!(kinds("42"), vec![TokenKind::Number(42.0), TokenKind::Eof]);
-        assert_eq!(kinds("3.14"), vec![TokenKind::Number(3.14), TokenKind::Eof]);
+        assert_eq!(kinds("2.5"), vec![TokenKind::Number(2.5), TokenKind::Eof]);
     }
 
     #[test]
