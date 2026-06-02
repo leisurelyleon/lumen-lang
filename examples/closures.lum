@@ -1,0 +1,17 @@
+// Closures capture their defining scope and keep independent state.
+fn make_counter() {
+    var count = 0;
+    fn increment() {
+        count = count + 1;
+        return count;
+    }
+    return increment;
+}
+
+var counter = make_counter();
+print counter(); // 1
+print counter(); // 2
+print counter(); // 3
+
+var other = make_counter();
+print other();   // 1 — a fresh, independent counter
