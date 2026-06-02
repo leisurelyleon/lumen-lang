@@ -234,16 +234,12 @@ fn eval_binary(op: &BinaryOp, left: Value, right: Value) -> Result<Value, Runtim
         BinaryOp::Sub => numeric(left, right, |a, b| a - b, "-"),
         BinaryOp::Mul => numeric(left, right, |a, b| a * b, "*"),
         BinaryOp::Div => match (left, right) {
-            (Value::Number(_), Value::Number(b)) if b == 0.0 => {
-                Err(RuntimeError::new("division by zero"))
-            }
+            (Value::Number(_), Value::Number(0.0)) => Err(RuntimeError::new("division by zero")),
             (Value::Number(a), Value::Number(b)) => Ok(Value::Number(a / b)),
             _ => Err(RuntimeError::new("operands of '/' must be numbers")),
         },
         BinaryOp::Mod => match (left, right) {
-            (Value::Number(_), Value::Number(b)) if b == 0.0 => {
-                Err(RuntimeError::new("modulo by zero"))
-            }
+            (Value::Number(_), Value::Number(0.0)) => Err(RuntimeError::new("modulo by zero")),
             (Value::Number(a), Value::Number(b)) => Ok(Value::Number(a % b)),
             _ => Err(RuntimeError::new("operands of '%' must be numbers")),
         },
