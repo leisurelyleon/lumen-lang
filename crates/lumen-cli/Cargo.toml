@@ -1,0 +1,17 @@
+[package]
+name = "lumen-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Command-line interface for Lumen: a REPL and a file runner."
+
+[[bin]]
+name = "lumen"
+path = "src/main.rs"
+
+[dependencies]
+lumen-core = { path = "../lumen-core" }
+clap.workspace = true
