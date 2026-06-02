@@ -73,7 +73,10 @@ impl Environment {
 
     /// A new scope nested inside `parent`.
     pub fn with_parent(parent: Rc<RefCell<Environment>>) -> Self {
-        Self { values: HashMap::new(), parent: Some(parent) }
+        Self {
+            values: HashMap::new(),
+            parent: Some(parent),
+        }
     }
 
     /// Binds `name` to `value` in this scope.

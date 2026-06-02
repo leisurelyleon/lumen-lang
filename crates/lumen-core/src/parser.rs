@@ -82,7 +82,11 @@ impl Parser {
 
     fn error(&self, message: &str) -> ParseError {
         let token = self.peek();
-        ParseError { message: message.to_string(), line: token.line, col: token.col }
+        ParseError {
+            message: message.to_string(),
+            line: token.line,
+            col: token.col,
+        }
     }
 
     // --- Declarations & statements ---
@@ -99,9 +103,15 @@ impl Parser {
 
     fn var_declaration(&mut self) -> Result<Stmt, ParseError> {
         let name = self.consume_identifier("expected variable name")?;
-        let initializer =
-            if self.match_kind(&TokenKind::Eq) { Some(self.expression()?) } else { None };
-        self.consume(&TokenKind::Semicolon, "expected ';' after variable declaration")?;
+        let initializer = if self.match_kind(&TokenKind::Eq) {
+            Some(self.expression()?)
+        } else {
+            None
+        };
+        self.consume(
+            &TokenKind::Semicolon,
+            "expected ';' after variable declaration",
+        )?;
         Ok(Stmt::Var { name, initializer })
     }
 
@@ -157,9 +167,16 @@ impl Parser {
         let condition = self.expression()?;
         self.consume(&TokenKind::RParen, "expected ')' after if condition")?;
         let then_branch = Box::new(self.statement()?);
-        let else_branch =
-            if self.match_kind(&TokenKind::Else) { Some(Box::new(self.statement()?)) } else { None };
-        Ok(Stmt::If { condition, then_branch, else_branch })
+        let else_branch = if self.match_kind(&TokenKind::Else) {
+            Some(Box::new(self.statement()?))
+        } else {
+            None
+        };
+        Ok(Stmt::If {
+            condition,
+            then_branch,
+            else_branch,
+        })
     }
 
     fn while_statement(&mut self) -> Result<Stmt, ParseError> {
@@ -171,8 +188,11 @@ impl Parser {
     }
 
     fn return_statement(&mut self) -> Result<Stmt, ParseError> {
-        let value =
-            if self.check(&TokenKind::Semicolon) { None } else { Some(self.expression()?) };
+        let value = if self.check(&TokenKind::Semicolon) {
+            None
+        } else {
+            Some(self.expression()?)
+        };
         self.consume(&TokenKind::Semicolon, "expected ';' after return value")?;
         Ok(Stmt::Return(value))
     }
@@ -188,7 +208,10 @@ impl Parser {
         if self.match_kind(&TokenKind::Eq) {
             let value = self.assignment()?;
             if let Expr::Variable(name) = expr {
-                Ok(Expr::Assign { name, value: Box::new(value) })
+                Ok(Expr::Assign {
+                    name,
+                    value: Box::new(value),
+                })
             } else {
                 Err(ParseError {
                     message: "invalid assignment target".into(),
@@ -205,7 +228,11 @@ impl Parser {
         let mut expr = self.and()?;
         while self.match_kind(&TokenKind::Or) {
             let right = self.and()?;
-            expr = Expr::Logical { left: Box::new(expr), op: LogicalOp::Or, right: Box::new(right) };
+            expr = Expr::Logical {
+                left: Box::new(expr),
+                op: LogicalOp::Or,
+                right: Box::new(right),
+            };
         }
         Ok(expr)
     }
@@ -214,8 +241,11 @@ impl Parser {
         let mut expr = self.equality()?;
         while self.match_kind(&TokenKind::And) {
             let right = self.equality()?;
-            expr =
-                Expr::Logical { left: Box::new(expr), op: LogicalOp::And, right: Box::new(right) };
+            expr = Expr::Logical {
+                left: Box::new(expr),
+                op: LogicalOp::And,
+                right: Box::new(right),
+            };
         }
         Ok(expr)
     }
@@ -231,7 +261,11 @@ impl Parser {
                 break;
             };
             let right = self.comparison()?;
-            expr = Expr::Binary { left: Box::new(expr), op, right: Box::new(right) };
+            expr = Expr::Binary {
+                left: Box::new(expr),
+                op,
+                right: Box::new(right),
+            };
         }
         Ok(expr)
     }
@@ -251,7 +285,11 @@ impl Parser {
                 break;
             };
             let right = self.term()?;
-            expr = Expr::Binary { left: Box::new(expr), op, right: Box::new(right) };
+            expr = Expr::Binary {
+                left: Box::new(expr),
+                op,
+                right: Box::new(right),
+            };
         }
         Ok(expr)
     }
@@ -267,7 +305,11 @@ impl Parser {
                 break;
             };
             let right = self.factor()?;
-            expr = Expr::Binary { left: Box::new(expr), op, right: Box::new(right) };
+            expr = Expr::Binary {
+                left: Box::new(expr),
+                op,
+                right: Box::new(right),
+            };
         }
         Ok(expr)
     }
@@ -285,7 +327,11 @@ impl Parser {
                 break;
             };
             let right = self.unary()?;
-            expr = Expr::Binary { left: Box::new(expr), op, right: Box::new(right) };
+            expr = Expr::Binary {
+                left: Box::new(expr),
+                op,
+                right: Box::new(right),
+            };
         }
         Ok(expr)
     }
@@ -293,10 +339,16 @@ impl Parser {
     fn unary(&mut self) -> Result<Expr, ParseError> {
         if self.match_kind(&TokenKind::Bang) {
             let right = self.unary()?;
-            Ok(Expr::Unary { op: UnaryOp::Not, right: Box::new(right) })
+            Ok(Expr::Unary {
+                op: UnaryOp::Not,
+                right: Box::new(right),
+            })
         } else if self.match_kind(&TokenKind::Minus) {
             let right = self.unary()?;
-            Ok(Expr::Unary { op: UnaryOp::Negate, right: Box::new(right) })
+            Ok(Expr::Unary {
+                op: UnaryOp::Negate,
+                right: Box::new(right),
+            })
         } else {
             self.call()
         }
@@ -321,7 +373,10 @@ impl Parser {
             }
         }
         self.consume(&TokenKind::RParen, "expected ')' after arguments")?;
-        Ok(Expr::Call { callee: Box::new(callee), args })
+        Ok(Expr::Call {
+            callee: Box::new(callee),
+            args,
+        })
     }
 
     fn primary(&mut self) -> Result<Expr, ParseError> {
@@ -385,8 +440,18 @@ mod tests {
         // 1 + 2 * 3 -> Add(1, Mul(2, 3))
         let expr = parse_expr("1 + 2 * 3;");
         match expr {
-            Expr::Binary { op: BinaryOp::Add, right, .. } => {
-                assert!(matches!(*right, Expr::Binary { op: BinaryOp::Mul, .. }));
+            Expr::Binary {
+                op: BinaryOp::Add,
+                right,
+                ..
+            } => {
+                assert!(matches!(
+                    *right,
+                    Expr::Binary {
+                        op: BinaryOp::Mul,
+                        ..
+                    }
+                ));
             }
             other => panic!("expected addition at the root, got {other:?}"),
         }
@@ -397,8 +462,18 @@ mod tests {
         // (1 + 2) * 3 -> Mul(Add(1, 2), 3)
         let expr = parse_expr("(1 + 2) * 3;");
         match expr {
-            Expr::Binary { op: BinaryOp::Mul, left, .. } => {
-                assert!(matches!(*left, Expr::Binary { op: BinaryOp::Add, .. }));
+            Expr::Binary {
+                op: BinaryOp::Mul,
+                left,
+                ..
+            } => {
+                assert!(matches!(
+                    *left,
+                    Expr::Binary {
+                        op: BinaryOp::Add,
+                        ..
+                    }
+                ));
             }
             other => panic!("expected multiplication at the root, got {other:?}"),
         }
@@ -407,7 +482,13 @@ mod tests {
     #[test]
     fn parses_comparison() {
         let expr = parse_expr("1 < 2;");
-        assert!(matches!(expr, Expr::Binary { op: BinaryOp::Less, .. }));
+        assert!(matches!(
+            expr,
+            Expr::Binary {
+                op: BinaryOp::Less,
+                ..
+            }
+        ));
     }
 
     #[test]

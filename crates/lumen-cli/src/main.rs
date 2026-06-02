@@ -8,7 +8,7 @@ use std::process::ExitCode;
 use clap::Parser as ClapParser;
 
 use lumen_cli::cli::{Cli, Command};
-use lumen_core::{interpret, lex, Interpreter, Parser as LumenParser};
+use lumen_core::{Interpreter, Parser as LumenParser, interpret, lex};
 
 fn main() -> ExitCode {
     let cli = Cli::parse();
@@ -76,7 +76,11 @@ fn run_repl() -> ExitCode {
 
 fn run_line(interpreter: &mut Interpreter, line: &str) -> Result<Vec<String>, String> {
     let tokens = lex(line).map_err(|err| err.to_string())?;
-    let statements = LumenParser::new(tokens).parse().map_err(|err| err.to_string())?;
-    interpreter.run(&statements).map_err(|err| err.to_string())?;
+    let statements = LumenParser::new(tokens)
+        .parse()
+        .map_err(|err| err.to_string())?;
+    interpreter
+        .run(&statements)
+        .map_err(|err| err.to_string())?;
     Ok(interpreter.take_output())
 }

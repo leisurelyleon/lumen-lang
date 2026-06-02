@@ -39,7 +39,7 @@ pub enum TokenKind {
     Eq,        // =
     EqEq,      // ==
     NotEq,     // !=
-    Less,      // 
+    Less,      //
     LessEq,    // <=
     Greater,   // >
     GreaterEq, // >=

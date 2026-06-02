@@ -6,9 +6,9 @@
 
 use std::hint::black_box;
 
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, criterion_group, criterion_main};
 
-use lumen_core::{interpret, lex, Parser};
+use lumen_core::{Parser, interpret, lex};
 
 const PROGRAM: &str = "
 fn fib(n) {

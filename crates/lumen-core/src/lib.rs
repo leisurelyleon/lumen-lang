@@ -15,7 +15,7 @@ pub mod value;
 
 pub use ast::{BinaryOp, Expr, LogicalOp, Stmt, UnaryOp};
 pub use error::{LexError, LumenError, ParseError, RuntimeError};
-pub use interpreter::{interpret, Interpreter};
+pub use interpreter::{Interpreter, interpret};
 pub use lexer::lex;
 pub use parser::Parser;
 pub use token::{Token, TokenKind};

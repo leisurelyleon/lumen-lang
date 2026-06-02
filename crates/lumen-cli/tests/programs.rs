@@ -22,7 +22,10 @@ fn fibonacci_sequence_program() {
             i = i + 1;
         }
     ";
-    assert_eq!(run(src), vec!["0", "1", "1", "2", "3", "5", "8", "13", "21", "34"]);
+    assert_eq!(
+        run(src),
+        vec!["0", "1", "1", "2", "3", "5", "8", "13", "21", "34"]
+    );
 }
 
 #[test]
@@ -74,8 +77,8 @@ fn shipped_example_files_run() {
         let path = format!("{}/../../examples/{name}", env!("CARGO_MANIFEST_DIR"));
         let source = std::fs::read_to_string(&path)
             .unwrap_or_else(|e| panic!("should read example {name}: {e}"));
-        let output = interpret(&source)
-            .unwrap_or_else(|e| panic!("example {name} should run: {e}"));
+        let output =
+            interpret(&source).unwrap_or_else(|e| panic!("example {name} should run: {e}"));
         assert!(!output.is_empty(), "example {name} should produce output");
     }
 }

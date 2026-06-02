@@ -31,28 +31,132 @@ pub fn lex(source: &str) -> Result<Vec<Token>, LexError> {
                     col += 1;
                 }
             }
-            '(' => push_single(&mut tokens, TokenKind::LParen, line, start_col, &mut i, &mut col),
-            ')' => push_single(&mut tokens, TokenKind::RParen, line, start_col, &mut i, &mut col),
-            '{' => push_single(&mut tokens, TokenKind::LBrace, line, start_col, &mut i, &mut col),
-            '}' => push_single(&mut tokens, TokenKind::RBrace, line, start_col, &mut i, &mut col),
-            ';' => push_single(&mut tokens, TokenKind::Semicolon, line, start_col, &mut i, &mut col),
-            ',' => push_single(&mut tokens, TokenKind::Comma, line, start_col, &mut i, &mut col),
-            '+' => push_single(&mut tokens, TokenKind::Plus, line, start_col, &mut i, &mut col),
-            '-' => push_single(&mut tokens, TokenKind::Minus, line, start_col, &mut i, &mut col),
-            '*' => push_single(&mut tokens, TokenKind::Star, line, start_col, &mut i, &mut col),
-            '/' => push_single(&mut tokens, TokenKind::Slash, line, start_col, &mut i, &mut col),
-            '%' => push_single(&mut tokens, TokenKind::Percent, line, start_col, &mut i, &mut col),
+            '(' => push_single(
+                &mut tokens,
+                TokenKind::LParen,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
+            ),
+            ')' => push_single(
+                &mut tokens,
+                TokenKind::RParen,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
+            ),
+            '{' => push_single(
+                &mut tokens,
+                TokenKind::LBrace,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
+            ),
+            '}' => push_single(
+                &mut tokens,
+                TokenKind::RBrace,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
+            ),
+            ';' => push_single(
+                &mut tokens,
+                TokenKind::Semicolon,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
+            ),
+            ',' => push_single(
+                &mut tokens,
+                TokenKind::Comma,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
+            ),
+            '+' => push_single(
+                &mut tokens,
+                TokenKind::Plus,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
+            ),
+            '-' => push_single(
+                &mut tokens,
+                TokenKind::Minus,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
+            ),
+            '*' => push_single(
+                &mut tokens,
+                TokenKind::Star,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
+            ),
+            '/' => push_single(
+                &mut tokens,
+                TokenKind::Slash,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
+            ),
+            '%' => push_single(
+                &mut tokens,
+                TokenKind::Percent,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
+            ),
             '=' => push_maybe_eq(
-                &chars, &mut tokens, TokenKind::EqEq, TokenKind::Eq, line, start_col, &mut i, &mut col,
+                &chars,
+                &mut tokens,
+                TokenKind::EqEq,
+                TokenKind::Eq,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
             ),
             '!' => push_maybe_eq(
-                &chars, &mut tokens, TokenKind::NotEq, TokenKind::Bang, line, start_col, &mut i, &mut col,
+                &chars,
+                &mut tokens,
+                TokenKind::NotEq,
+                TokenKind::Bang,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
             ),
             '<' => push_maybe_eq(
-                &chars, &mut tokens, TokenKind::LessEq, TokenKind::Less, line, start_col, &mut i, &mut col,
+                &chars,
+                &mut tokens,
+                TokenKind::LessEq,
+                TokenKind::Less,
+                line,
+                start_col,
+                &mut i,
+                &mut col,
             ),
             '>' => push_maybe_eq(
-                &chars, &mut tokens, TokenKind::GreaterEq, TokenKind::Greater, line, start_col, &mut i,
+                &chars,
+                &mut tokens,
+                TokenKind::GreaterEq,
+                TokenKind::Greater,
+                line,
+                start_col,
+                &mut i,
                 &mut col,
             ),
             '"' => {
@@ -76,7 +180,11 @@ pub fn lex(source: &str) -> Result<Vec<Token>, LexError> {
                     }
                     text.push(ch);
                 }
-                tokens.push(Token { kind: TokenKind::Str(text), line, col: str_col });
+                tokens.push(Token {
+                    kind: TokenKind::Str(text),
+                    line,
+                    col: str_col,
+                });
             }
             c if c.is_ascii_digit() => {
                 let mut num = String::new();
@@ -105,7 +213,11 @@ pub fn lex(source: &str) -> Result<Vec<Token>, LexError> {
                     line,
                     col: start_col,
                 })?;
-                tokens.push(Token { kind: TokenKind::Number(value), line, col: start_col });
+                tokens.push(Token {
+                    kind: TokenKind::Number(value),
+                    line,
+                    col: start_col,
+                });
             }
             c if c.is_alphabetic() || c == '_' => {
                 let mut ident = String::new();
@@ -114,7 +226,11 @@ pub fn lex(source: &str) -> Result<Vec<Token>, LexError> {
                     i += 1;
                     col += 1;
                 }
-                tokens.push(Token { kind: keyword_or_identifier(&ident), line, col: start_col });
+                tokens.push(Token {
+                    kind: keyword_or_identifier(&ident),
+                    line,
+                    col: start_col,
+                });
             }
             other => {
                 return Err(LexError {
@@ -126,7 +242,11 @@ pub fn lex(source: &str) -> Result<Vec<Token>, LexError> {
         }
     }
 
-    tokens.push(Token { kind: TokenKind::Eof, line, col });
+    tokens.push(Token {
+        kind: TokenKind::Eof,
+        line,
+        col,
+    });
     Ok(tokens)
 }
 
@@ -155,11 +275,19 @@ fn push_maybe_eq(
     col_cursor: &mut usize,
 ) {
     if *i + 1 < chars.len() && chars[*i + 1] == '=' {
-        tokens.push(Token { kind: two_char, line, col });
+        tokens.push(Token {
+            kind: two_char,
+            line,
+            col,
+        });
         *i += 2;
         *col_cursor += 2;
     } else {
-        tokens.push(Token { kind: one_char, line, col });
+        tokens.push(Token {
+            kind: one_char,
+            line,
+            col,
+        });
         *i += 1;
         *col_cursor += 1;
     }
@@ -195,7 +323,11 @@ mod tests {
     fn distinguishes_keywords_from_identifiers() {
         assert_eq!(
             kinds("var foo"),
-            vec![TokenKind::Var, TokenKind::Identifier("foo".into()), TokenKind::Eof]
+            vec![
+                TokenKind::Var,
+                TokenKind::Identifier("foo".into()),
+                TokenKind::Eof
+            ]
         );
     }
 
@@ -207,14 +339,21 @@ mod tests {
 
     #[test]
     fn lexes_strings() {
-        assert_eq!(kinds("\"hi\""), vec![TokenKind::Str("hi".into()), TokenKind::Eof]);
+        assert_eq!(
+            kinds("\"hi\""),
+            vec![TokenKind::Str("hi".into()), TokenKind::Eof]
+        );
     }
 
     #[test]
     fn skips_line_comments() {
         assert_eq!(
             kinds("1 // ignored\n2"),
-            vec![TokenKind::Number(1.0), TokenKind::Number(2.0), TokenKind::Eof]
+            vec![
+                TokenKind::Number(1.0),
+                TokenKind::Number(2.0),
+                TokenKind::Eof
+            ]
         );
     }
 

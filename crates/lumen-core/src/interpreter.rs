@@ -88,7 +88,11 @@ impl Interpreter {
                 }
                 Ok(())
             }
-            Stmt::If { condition, then_branch, else_branch } => {
+            Stmt::If {
+                condition,
+                then_branch,
+                else_branch,
+            } => {
                 if is_truthy(&self.evaluate(condition, env)?) {
                     self.execute(then_branch, env)
                 } else if let Some(else_branch) = else_branch {
@@ -110,7 +114,8 @@ impl Interpreter {
                     body: body.clone(),
                     closure: env.clone(),
                 };
-                env.borrow_mut().define(name.clone(), Value::Function(Rc::new(function)));
+                env.borrow_mut()
+                    .define(name.clone(), Value::Function(Rc::new(function)));
                 Ok(())
             }
             Stmt::Return(expr) => {
@@ -123,7 +128,11 @@ impl Interpreter {
         }
     }
 
-    fn evaluate(&mut self, expr: &Expr, env: &Rc<RefCell<Environment>>) -> Result<Value, Interrupt> {
+    fn evaluate(
+        &mut self,
+        expr: &Expr,
+        env: &Rc<RefCell<Environment>>,
+    ) -> Result<Value, Interrupt> {
         match expr {
             Expr::Number(n) => Ok(Value::Number(*n)),
             Expr::Str(s) => Ok(Value::Str(s.clone())),
@@ -193,7 +202,9 @@ impl Interpreter {
 
         // A fresh scope whose parent is the function's CLOSURE — this is what
         // makes scoping lexical rather than dynamic.
-        let call_env = Rc::new(RefCell::new(Environment::with_parent(function.closure.clone())));
+        let call_env = Rc::new(RefCell::new(Environment::with_parent(
+            function.closure.clone(),
+        )));
 
         // Deliberate scoped block: bind the parameters, then RELEASE the mutable
         // borrow before executing the body (which borrows `call_env` again).
@@ -229,7 +240,9 @@ fn eval_binary(op: &BinaryOp, left: Value, right: Value) -> Result<Value, Runtim
         BinaryOp::Add => match (left, right) {
             (Value::Number(a), Value::Number(b)) => Ok(Value::Number(a + b)),
             (Value::Str(a), Value::Str(b)) => Ok(Value::Str(format!("{a}{b}"))),
-            _ => Err(RuntimeError::new("operands of '+' must be two numbers or two strings")),
+            _ => Err(RuntimeError::new(
+                "operands of '+' must be two numbers or two strings",
+            )),
         },
         BinaryOp::Sub => numeric(left, right, |a, b| a - b, "-"),
         BinaryOp::Mul => numeric(left, right, |a, b| a * b, "*"),
@@ -260,7 +273,9 @@ fn numeric(
 ) -> Result<Value, RuntimeError> {
     match (left, right) {
         (Value::Number(a), Value::Number(b)) => Ok(Value::Number(f(a, b))),
-        _ => Err(RuntimeError::new(format!("operands of '{sym}' must be numbers"))),
+        _ => Err(RuntimeError::new(format!(
+            "operands of '{sym}' must be numbers"
+        ))),
     }
 }
 
@@ -273,9 +288,13 @@ fn compare(
     match (left, right) {
         (Value::Number(a), Value::Number(b)) => match a.partial_cmp(&b) {
             Some(ordering) => Ok(Value::Bool(f(ordering))),
-            None => Err(RuntimeError::new(format!("cannot compare operands with '{sym}'"))),
+            None => Err(RuntimeError::new(format!(
+                "cannot compare operands with '{sym}'"
+            ))),
         },
-        _ => Err(RuntimeError::new(format!("operands of '{sym}' must be numbers"))),
+        _ => Err(RuntimeError::new(format!(
+            "operands of '{sym}' must be numbers"
+        ))),
     }
 }
 
@@ -318,7 +337,10 @@ mod tests {
 
     #[test]
     fn if_else_branches() {
-        assert_eq!(run("if (1 < 2) { print \"yes\"; } else { print \"no\"; }"), vec!["yes"]);
+        assert_eq!(
+            run("if (1 < 2) { print \"yes\"; } else { print \"no\"; }"),
+            vec!["yes"]
+        );
     }
 
     #[test]
@@ -329,7 +351,10 @@ mod tests {
 
     #[test]
     fn function_call_and_return() {
-        assert_eq!(run("fn add(a, b) { return a + b; } print add(3, 4);"), vec!["7"]);
+        assert_eq!(
+            run("fn add(a, b) { return a + b; } print add(3, 4);"),
+            vec!["7"]
+        );
     }
 
     #[test]
