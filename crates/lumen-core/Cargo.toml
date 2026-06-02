@@ -10,3 +10,10 @@ description = "The Lumen language: lexer, recursive-descent parser, and tree-wal
 
 [dependencies]
 thiserror.workspace = true
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bench]]
+name = "pipeline"
+harness = false
